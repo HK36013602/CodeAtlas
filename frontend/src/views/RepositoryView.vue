@@ -1,0 +1,2 @@
+<script setup lang="ts">import{useRouter}from'vue-router';import RepositoryWorkspace from'../components/RepositoryWorkspace.vue';import{useAnalysis}from'../composables/useAnalysis';const a=useAnalysis(),router=useRouter();async function complete(id:number){await a.load(id);await router.push({name:'map'})}</script>
+<template><RepositoryWorkspace @complete="complete" @close="router.push({name:'map'})"/></template>
