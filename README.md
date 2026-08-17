@@ -1,34 +1,51 @@
 # CodeAtlas
 
-生产级代码架构分析平台。默认加载合成的 Java/Python 微服务仓库，也支持接入公开 GitHub/Gitee 仓库或上传 ZIP 源码，展示依赖图、循环依赖、复杂度、代码热点与风险诊断。
+[简体中文](README.zh-CN.md)
 
-## 技术栈
+CodeAtlas is a production-oriented software architecture analysis platform. It can analyze public GitHub or Gitee repositories and uploaded source archives, then visualize module dependencies, cycles, complexity, code hotspots, and architectural risks. A synthetic Java/Python microservice repository is included for immediate exploration.
 
-- Vue 3、TypeScript、ECharts、Nginx
-- FastAPI、Celery
-- PostgreSQL、Redis
-- Docker Compose
+## Highlights
 
-## 启动
+- Ingest public GitHub and Gitee repositories through shallow cloning
+- Upload local source code as a ZIP archive up to 100 MB
+- Parse Java and Python modules and imports
+- Measure effective lines of code, cyclomatic complexity, connectivity, and hotspot scores
+- Visualize dependency topology and circular dependencies
+- Separate repository ingestion, architecture map, risk, and file analysis into routed workspaces
+- Process repositories asynchronously with Celery
+- Remove temporary source files when analysis completes
+- Persist analysis summaries in PostgreSQL
+
+## Architecture
+
+- **Frontend:** Vue 3, TypeScript, ECharts, Nginx
+- **API and workers:** FastAPI, Celery
+- **Storage:** PostgreSQL
+- **Queue and cache:** Redis
+- **Runtime:** Docker Compose
+
+## Quick start
+
+Make sure Docker Desktop is running, then execute from the repository root:
 
 ```powershell
-cd C:\Users\ASUS\Desktop\CodeAtlas
-docker-compose up --build -d
+docker compose up --build -d
+docker compose ps
 ```
 
-- 工作台：http://localhost:5273
-- API 文档：http://localhost:8100/docs
+- Analysis workspace: http://localhost:5273
+- OpenAPI documentation: http://localhost:8100/docs
 
-## 代码接入
+## Analyze a repository
 
-在左侧选择“代码接入”：
+Open **Repository ingestion** in the left navigation and choose either:
 
-- 公开仓库：输入 GitHub/Gitee HTTPS 地址，后台使用浅克隆分析。
-- 本地项目：上传不超过 100 MB 的 ZIP 包。
+- **Public repository:** enter a public GitHub or Gitee HTTPS URL. The worker performs a shallow clone before analysis.
+- **Local project:** upload a ZIP archive no larger than 100 MB.
 
-当前真实扫描支持 Java 与 Python，识别模块、导入依赖、有效代码行、圈复杂度、连接度和热点文件。源码在任务结束后自动清理，分析摘要保存在 PostgreSQL。
+The current scanner supports Java and Python. It extracts modules, import dependencies, effective lines of code, cyclomatic complexity, connectivity, and hotspot files. Temporary source files are deleted after processing; only the analysis summary is retained in PostgreSQL.
 
-## 测试
+## Tests
 
 ```powershell
 cd backend
@@ -36,10 +53,10 @@ $env:PYTHONPATH='.'
 python -m pytest tests -q
 ```
 
-## 停止
+## Stop the stack
 
 ```powershell
-docker-compose down
+docker compose down
 ```
 
-默认示例标注为模拟数据；接入后的真实分析结果会标注“真实扫描”。
+The bundled example is explicitly labeled as synthetic data. Results created from an ingested repository are labeled as a real scan.
